@@ -121,8 +121,7 @@ button {
 .container {
   backdrop-filter: blur(6px);
   margin: 3em auto;
-  width: 90%;
-  max-width: 700px;
+  width: 800px;
   background-color: var(--background-pink);
   color: var(--text-pink);
   outline-offset: 5px;
@@ -136,20 +135,8 @@ button {
 }
 
 .container img {
-  border-radius: 10px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: var(--marker-pink);
-  outline-offset: 5px;
-  outline-width: 5px;
-  outline-style: double;
-  outline-color: var(--marker-pink);
   width: -webkit-fill-available;
   display: block;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
 }
 
 .header {
