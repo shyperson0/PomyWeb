@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Violence Engine - Violence</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/favico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favico/favicon-16x16.png">
+    <link rel="manifest" href="/favico/site.webmanifest">
+  </head>
+  <body>
+    <div class="container">
+      <tbody>
+        <tr>
+          <td><img src="/img/headerimg.png"></td>
+        </tr>
+        <tr>
+          <td valign="top">
+          <td>
+            <table width="100%" cellpadding="0" cellspacing="3">
+              <tbody>
+                <tr>
+                  <td><a href="https://www.violence.lat/">Home</a> / Content / Violence Engine</td>
+                  <td align="right"><a href="/ja/content/violenceengine.html">Japanese</a> | English</td>
+                </tr>
+              </tbody>
+            </table>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                  <h1>The Violence Engine.</h1>
+                  <h2>Target</h2>
+                  <p>Violence Engine(VE1 from now on), attempts to provide a compatible, content driven development experience for videogames, with
+                  an emphasis on performance and playability. VE1 allows for fancy graphical effects and the absolute lack of detail to coexist in
+                  the same program, letting the end user be in total control about how they run their copy of the game.</p>
+                  <p>This is a major upside, that many simple to use General Purpose Game Engines (GPGE from now on) tend to forget, like Godot Engine,
+                  which does not expose important settings like Ambient Occlussion, Shadow Mapping, or Global Illumination to the End User, but instead
+                  are set in stone by the Client Developer. VE1 aims to provide a renderer that can be easily run in old and modern computers alike.</p>
+                  <h2>Features</h2>
+                  <p>VE1 includes a BSP renderer for it's Levels("Maps"), and includes three main lighting solutions, all of which should be used in
+                  tandem, to let the user make the compromises they deem worth. It's primary lighting engine doesn't calculate any lights, instead
+                  overlays a pre-calculated Lightmap over level geometry, and uses a Volumetric Radiance Grid to light dynamic objects. The VRG is a 3-D
+                  grid of points, each assigned a color representing the light in that spot. This is the baseline light, cheap to run in gameplay, generally
+                  good enough, and can be combined with our Direct Lighting Engine. The Direct Lighting Engine calculates lights and shadows in realtime,
+                  both branch off the same algorithm, an amateur variation of Carmack's Reverse, which while originally used to calculate cheap, sharp shadows,
+                  can be inverted to create lights instead(Carmack's Forward?). This is the core of the Direct Lighting Engine, it only handles Direct Lighting,
+                  as the name implies, so no bounce lighting that is handled by our third component: the Individual Temporal Global Illumination processor. ITGI
+                  calcules bounce lighting, unlike previous implementations, it's output is not aggregate by default, instead is calculated and kept separate
+                  per light. This allows for slower calculations taking a couple frames to be more responsive. Turning off a lightsource in other Temporal
+                  GI solutions may result in a fade-off, ITGI solves this issue by keeping each light source's bounce lighting separate, so it can be entirely
+                  ignored by the renderer to turn off immediately, while still having bounce light results for other light sources already calculated.</p>
+                  <p>With ITGI, only the aggregate result will be calculated each frame consistenly, lights-offs can be done with no performance impact, and
+                  static lights' bounce results can be cached in memory in case they are later turned on, like a flickering lightbulb, at no recalculation
+                  performance impact. The same bounce result is used until the light or it's bounce space are modified, moment in which they'll be updated
+                  accordingly.</p>
+                  <h2>Creating games with the Violence Engine</h2>
+                  <p>A preview of VE1 is not yet available, but this following text should be fairly representative of the realease distribution usage:</p>
+                  <ul>
+                  	<li>Mapping.<br><p>The User creates maps in a mostly brush workflow, static models can be used and are encouraged, although most
+                  	third party editors will not provide support for them out of the box. Solid Brushwork can be done is most level editors. Trenchbroom
+                  	is our recommended Open Source alternative if you prefer to use free software, or you want to extend the level editor with features
+                  	necessary for your Game/Mod. An Open Source release of a full VE1 compatible level editor is planned, but not scheduled.</p>
+                  	<p>Due to VE1's own implementation of BSP, solutions like EricW Tools are not compatible. A Quake BSP loader is considered,
+                  	but not planned.</p></li>
+                  	<li>Programming.<br><p>Additional features like custom gameplay, additional loaders for other file formats, or other revelevant
+                  	modifications can be done via a dynamically linked library. C++ Headers will be available with your distribution of VE1, along
+                  	with a relevant copyright notice.</p></li>
+                  	<li>Scripting.<br><p>Lua based game scripts can be made to add level and gamemode logic. \<gamemode\>.zsc will be loaded for any given
+                  	gamemode the level is loaded in. \<mapname\>.zsc will be loaded for any given level. For example, a 'ghosttown.zsc' will be loaded automatically
+                  	when a match is started in the 'ghosttown.bsp' map, this script should handle level specific logic like, for example, a series of animated
+                  	Ghost NPCs. If this match is being played in the 'gungame' gamemode, the 'gungame.zsc' script will be loaded, where logic like scoring,
+                  	switching player weapons, and ending the game should be carried on.</p></li>
+                  	<li>Menus.<br><p>LuaUI is the system used for creating menus. Most of the features in .zsc Lua are available, but the scope is limited
+                  	to changing Server and Client Game Variables, and a subset of Game Commands. This scope limitting allows for better control around
+                  	how the game's state is modified by different components. LuaUI and Zsc can communicate via the notify system with the SendNotify(notifyname: String, args: Table)
+                  	LuaUI function, which Zsc scripts can listen for and verify it to be launched by the LuaUINotifier object. This allows for menus that are not strictly
+                  	settings for the game, but things relevant to the match, like creating a store UI with LuaUI and notifying the gamemode's scripts about what
+                  	items the user intends to purchase.</p></li>
+                  	<li>Meshes, Sounds and Textures.<br><p>3-D meshes are converted into the VE1 compatible MMesh format by the mmeshimp utility, accepting Waveform
+                  	 .OBJ meshes as input. mmeshexp can do the opposite conversion, transforming VE1 MMeshes to Waveform .OBJ</p>
+                  	 <p>Textures in KTX format are packed as-is into their respective container/s.</p>
+                  	 <p>Audio files in supported AAC, or OGG format is packed as-is into their respective container/s.</p></li>
+                  	<li>Packing.<br><p>The upaker utility is used to Package all files into their appropiate Content Containers. They are as following:</p>
+                  		<ul>
+                  			<li>.tpak -> Textures</li>
+                  			<li>.spak -> Streamed Audio</li>
+                  			<li>.lpak -> Loaded Audio</li>
+                  			<li>.rpak -> Scripts, Meshes, Maps, Shaders, LuaUI, Config and other supporting files</li>
+                  		</ul>
+                  	</li>
+                  </ul>
+                  <p>Overall, the workflow of VE1 should keep everyone working in their preferred software for creating source files, whatever IDE or Image Editor
+                  is viable as long as it can output compatible files. Resource importing and packing can be automated with just source files, to simply build the final
+                  .xpak's from relevant files, hassle free for everyone. The main objective is to ensure ease of cooperation between and across teams.</p>
+                  <p>If you wanna sign up for a preview of VE1 once it becomes privately available, please send me an email to emisorano@gmx.com. Keep in mind,
+                  the private previews will only contain release candidate modules, so only a subset of the features will be available. Modules in beta stages will
+                  be held back until release candidate status is achieved.</p>
+                  <p>Signing up for a private preview invitation does not give you the right to redistribute, copy, modify, sell nor any other right not covered
+                  by the license provided in the VE1 distribution. Please consult the license shipped with the distribution once it becomes available to know
+                  what your freedoms and limitations are regarding usage of VE1 and it's components.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        
+      </tbody>
+    </div>
+  </body>
+</html>
